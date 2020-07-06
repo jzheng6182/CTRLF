@@ -1,0 +1,127 @@
+#! /usr/bin/env python3
+import tkinter as tk
+import binascii, pyaes, sys, base64, os.path, os
+from tkinter import *
+from pathlib import Path
+from tkinter.font import Font
+from tkinter.filedialog import askopenfilename
+import secrets
+import string
+import requests, re
+from urllib.request import urlopen
+
+
+def main():
+    global entry3
+    global wordlist
+    global entry4
+    url = entry3.get()
+    stringf = str(entry4.get())
+    f = open(wordlist, 'r')
+    read_file = f.read().split()
+    validaddr=[]
+    total= 0
+    # print (stringf)
+    for word in read_file:
+        full_url = url + "/" + word     
+        response = requests.get(full_url)
+    #print(response)
+        if response.status_code == 200:
+            validaddr.append(full_url)
+    print ("String found in:")
+    # print (validaddr)
+    for links in validaddr:
+        html_content = urlopen(links).read().decode('utf-8')
+        # print (html_content)
+        matches = re.findall(stringf, html_content, flags=re.IGNORECASE)
+        if len(matches) == 0: 
+            continue
+        else:
+            print (links)
+            total += 1
+    if total == 0:
+        print ("None")
+            
+
+
+
+# GUI Dimensions
+HEIGHT = 700
+WIDTH = 700
+root = tk.Tk()
+# GUI NAME AND SIZE
+root.title("CTRL+F")
+canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
+canvas.pack()
+root.resizable(False, False)
+
+def fname():
+    # file picker for wordlist
+    global wordlist
+    wordlist = askopenfilename()
+    return wordlist
+
+# Python windows virus
+def x():
+    global choices
+    choices = 1
+    return
+
+
+# python Linux virus
+def y():
+    global choices
+    choices = 2
+    return
+
+
+
+# button to select
+menu = Menu(root)
+root.config(menu=menu)
+# subMenu = Menu(menu)
+# menu.add_cascade(label="Type of String", menu=subMenu)
+# subMenu.add_command(label="Regular Expressions", command=x)
+# subMenu.add_command(label="Word", command=y)
+# subMenu.add_command(label="First and last", command=z)
+# subMenu.add_command(label="None", command=a)
+# GUI HEADER
+frame = tk.Frame(root, bd=5)
+frame.place(relx=0.5, rely=0.05, relwidth=1, relheight=0.2, anchor='n')
+label = tk.Label(frame, text="CTRL+F", font=("-weight bold", 36))
+label.config(fg="Blue")
+label.place(relx=0.3, rely=0, relwidth=.5, relheight=1.1)
+# file selection
+label2 = tk.Label(root, text="Wordlist:", anchor='w', font=15)
+label2.place(relx=0, rely=0.35, relwidth=0.4, relheight=0.05)
+label2.config(fg="Blue")
+filebutton = tk.Button(root, text="Select", font=40, command=fname)
+filebutton.config(fg="Blue")
+filebutton.place(relx=.5, rely=0.35, relwidth=0.45, relheight=0.09)
+# file naming
+label3 = tk.Label(root, text="Target Webpage:", anchor='w', font=15)
+label3.place(relx=0, rely=0.5, relwidth=0.4, relheight=0.05)
+label3.config(fg="Blue")
+entry3 = tk.Entry(root, font=40)
+entry3.place(relx=.5, rely=0.5, relwidth=0.45, relheight=0.09)
+entry3.focus_set()
+#string input
+label4 = tk.Label(root, text="Search String:", anchor='w', font=15)
+label4.place(relx=0, rely=0.65, relwidth=0.4, relheight=0.05)
+label4.config(fg="Blue")
+entry4 = tk.Entry(root, font=40)
+entry4.place(relx=.5, rely=0.65, relwidth=0.45, relheight=0.09)
+entry4.focus_set()
+
+#string selection
+
+# label4= tk.Label(root, text="""Choose a Type of String:""", anchor='w', font=5)
+# label4.place(relx=0.5, rely=0.6, relwidth=0.4, relheight=0.05)
+
+# button mashing
+button = tk.Button(root, text="Hunt!", bg="blue", font=40, command=main)
+button.place(relx=0.3, rely=0.8, relwidth=0.45, relheight=0.15)
+button1 = tk.Button(root, text="click to exit", bg="red", font=10, command=root.destroy)
+button1.place(relx=.8, rely=0.9, relwidth=0.15, relheight=0.05)
+
+root.mainloop()
